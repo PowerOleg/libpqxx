@@ -2,7 +2,9 @@
 #include <pqxx/pqxx>
 #include <Windows.h>
 #include <tuple>
+#include <set>
 #pragma execution_character_set("utf-8")
+
 
 
 int main(int argc, char** argv)
@@ -13,7 +15,7 @@ int main(int argc, char** argv)
 	std::cout << "Program has started" << std::endl;
 	try
 	{
-		pqxx::connection conn("host=localhost port=5432 dbname=cpp_integration user=postgres password=106601333454");
+		pqxx::connection conn("host=localhost port=5432 dbname=cpp_integration user=postgres password=10");
 		std::cout << "Connection is successful" << std::endl;
 		pqxx::work tx{ conn };
 
@@ -86,14 +88,25 @@ int main(int argc, char** argv)
 
 
 		//select query
-		//auto values = tx.query<std::string, std::string>("SELECT * FROM books");
+		auto values = tx.query<std::string, std::string>("SELECT c.firstname, c.secondname FROM Client c "
+			"JOIN Clientsdata cd on cd.client_id = c.id "
+			"where cd.phone_number like ('%1%');"
+			);
+
+		std::set<std::string> tree_set;
+
+		for (std::tuple<std::string, std::string> value : values)
+		{
+			tree_set.insert(std::get<0>(value) + " " + std::get<1>(value));
+			//std::cout << "Name: " << std::get<0>(value) << ", secondname: " << std::get<1>(value) << std::endl;
+		}
+
+		for (std::string str : tree_set)
+		{
+			std::cout << "Name: " << str << std::endl;
+		}
 	
-		//for (std::tuple<std::string, std::string> value : values)
-		//{
-		//	std::cout << std::get<0>(value) << std::endl;
-		//}
-	
-	
+
 	}
 	catch (const std::exception& e)
 	{
