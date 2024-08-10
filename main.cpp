@@ -1,19 +1,19 @@
 #include <iostream>
 #include <pqxx/pqxx>
-#include <Windows.h>
+
 #include <tuple>
 #include <set>
 #pragma execution_character_set("utf-8")
 
-void create_table(pqxx::connection& conn, std::string table, std::string param)
+/*void create_table(pqxx::connection& conn, std::string table, std::string param)
 {
 	pqxx::work tx{ conn };
 	tx.exec("CREATE TABLE IF NOT EXISTS " + table + " (" + param + ");");
 	tx.commit();
 	std::cout << "A table has created" << std::endl;
-}
+}*/
 
-void insert_into(pqxx::connection& conn)
+/*void insert_into(pqxx::connection& conn)
 {
 	pqxx::work tx{ conn };
 	conn.prepare("prepared_insert", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//study prepared statement
@@ -37,7 +37,7 @@ void insert_into(pqxx::connection& conn)
 	tx.exec_prepared("prepared_insert", "Алеша2", "Кузькин2");//study prepared statement
 	tx.commit();
 	std::cout << "Tables were filled" << std::endl;
-}
+}*/
 
 void delete_row_by_id(pqxx::connection& conn, std::string table, std::string id)
 {
@@ -75,52 +75,32 @@ std::set<std::string> select_query(pqxx::connection& conn)
 
 int main(int argc, char** argv)
 {
-	//setlocale(LC_ALL, "ru");
-	SetConsoleCP(CP_UTF8);
-	SetConsoleOutputCP(CP_UTF8);
-	std::cout << "Program has started" << std::endl;
-	try
-	{
-		pqxx::connection conn("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
-		std::cout << "Connection is successful" << std::endl;
+
+
+
 
 		//create+
-		create_table(conn, 
-			"Client",
-			"id SERIAL PRIMARY KEY, "
-			"firstname varchar(255) NOT NULL, "
-			"secondname varchar(255) NOT NULL"
-			);
-		create_table(conn,
-			"ClientsData",
-			"id SERIAL PRIMARY KEY, "
-			"email varchar(255), "
-			"phone_number varchar(255), "
-			"client_id int references Client(id)"
-		);
+		//create_tables();
 
 
 
 		//insert+
-		insert_into(conn);
+		//insert_into();
 
 		//update+
-		update_query(conn, "client", "secondname", "\'Вали\'", "firstname=\'Солимр Ибн\'");
-		update_query(conn, "clientsdata", "phone_number", "\'\'", "client_id=(select id from client c where c.secondname like (\'Долго%\')) and id=3");
+		//update_query(conn, "client", "secondname", "\'Вали\'", "firstname=\'Солимр Ибн\'");
+		//update_query(conn, "clientsdata", "phone_number", "\'\'", "client_id=(select id from client c where c.secondname like (\'Долго%\')) and id=3");
 
 		//delete row+
-		delete_row_by_id(conn, "Client", "3");
+		//delete_row_by_id(conn, "Client", "3");
 		
 		//select+
-		std::set<std::string> result_set = select_query(conn);
+		/*std::set<std::string> result_set = select_query(conn);
 		for (std::string str : result_set)
 		{
 			std::cout << "Name: " << str << std::endl;
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+		}*/
+	
+	
 	return 0;
 }

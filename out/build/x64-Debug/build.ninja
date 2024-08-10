@@ -57,6 +57,14 @@ build CMakeFiles\cmakeSQL_libpqxx.dir\main.cpp.obj: CXX_COMPILER__cmakeSQL_libpq
   TARGET_COMPILE_PDB = CMakeFiles\cmakeSQL_libpqxx.dir\
   TARGET_PDB = cmakeSQL_libpqxx.pdb
 
+build CMakeFiles\cmakeSQL_libpqxx.dir\ClientManager.cpp.obj: CXX_COMPILER__cmakeSQL_libpqxx_unscanned_Debug C$:\cpp\sixth\cmakeSQL_libpqxx\ClientManager.cpp || cmake_object_order_depends_target_cmakeSQL_libpqxx
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17
+  INCLUDES = -IC:\cpp\sixth\cmakeSQL_libpqxx\out\build\x64-Debug\libpqxx-build\include -IC:\cpp\libpqxx-7.9.2\libpqxx-7.9.2\include
+  OBJECT_DIR = CMakeFiles\cmakeSQL_libpqxx.dir
+  OBJECT_FILE_DIR = CMakeFiles\cmakeSQL_libpqxx.dir
+  TARGET_COMPILE_PDB = CMakeFiles\cmakeSQL_libpqxx.dir\
+  TARGET_PDB = cmakeSQL_libpqxx.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target cmakeSQL_libpqxx
@@ -65,7 +73,7 @@ build CMakeFiles\cmakeSQL_libpqxx.dir\main.cpp.obj: CXX_COMPILER__cmakeSQL_libpq
 #############################################
 # Link the executable cmakeSQL_libpqxx.exe
 
-build cmakeSQL_libpqxx.exe: CXX_EXECUTABLE_LINKER__cmakeSQL_libpqxx_Debug CMakeFiles\cmakeSQL_libpqxx.dir\main.cpp.obj | libpqxx-build\src\pqxx.lib C$:\Program$ Files\PostgreSQL\16\lib\libpq.lib || libpqxx-build\src\pqxx.lib
+build cmakeSQL_libpqxx.exe: CXX_EXECUTABLE_LINKER__cmakeSQL_libpqxx_Debug CMakeFiles\cmakeSQL_libpqxx.dir\main.cpp.obj CMakeFiles\cmakeSQL_libpqxx.dir\ClientManager.cpp.obj | libpqxx-build\src\pqxx.lib C$:\Program$ Files\PostgreSQL\16\lib\libpq.lib || libpqxx-build\src\pqxx.lib
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = libpqxx-build\src\pqxx.lib  "C:\Program Files\PostgreSQL\16\lib\libpq.lib"  wsock32.lib  ws2_32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

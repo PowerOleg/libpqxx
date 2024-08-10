@@ -6,7 +6,7 @@ project(cmakeSQL_libpqxx)
 add_subdirectory("C:\\cpp\\libpqxx-7.9.2\\libpqxx-7.9.2" libpqxx-build)
 
 set(SOURCE_EXE main.cpp)
-add_executable(cmakeSQL_libpqxx ${SOURCE_EXE})
+add_executable(cmakeSQL_libpqxx ${SOURCE_EXE} "ClientManager.h" "ClientManager.cpp")
 
 target_compile_features(cmakeSQL_libpqxx PRIVATE cxx_std_17)
 
