@@ -73,32 +73,6 @@ std::set<std::string> select_query(pqxx::connection& conn)
 	return result_set;
 }
 
-/*void insert_into(pqxx::connection& conn)
-{
-	pqxx::work tx{ conn };
-	conn.prepare("prepared_insert", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//study prepared statement
-
-	tx.exec("INSERT INTO Client(firstname, secondname) "
-		"VALUES('Солимр Ибн', 'Вали Барад'), "
-		"('Петя', 'Долгопрудов'), "
-		"('Алеша', 'Кузькин');"
-	);
-
-	tx.exec("INSERT INTO ClientsData(email, phone_number, client_id) "
-		"VALUES('solimr@mail.ru', '123456', 1), "
-		"('ibnvalibarad@yandex.ru', '123456', 1), "
-		"('ppp555@yahoo.com', '+1(243)-254-21', 2);"
-	);
-
-	tx.exec("INSERT INTO ClientsData(email, phone_number, client_id) "
-		"VALUES('p111@yandex.ru', '118', 2);"
-	);
-
-	tx.exec_prepared("prepared_insert", "Алеша2", "Кузькин2");//study prepared statement
-	tx.commit();
-	std::cout << "Tables were filled" << std::endl;
-}*/
-
 int main(int argc, char** argv)
 {
 	//setlocale(LC_ALL, "ru");
@@ -108,11 +82,17 @@ try
 {
 	pqxx::connection connection("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
 	ClientManager clientManager(std::move(connection));
-	std::string new_client_id1 = clientManager.addClient("Солимр Ибн", "Вали Барад", "solimr@mail.ru");
-	std::string new_client_id1 = clientManager.addClient("Солимр Ибн", "Вали Барад", "ibnvalibarad@yandex.ru");
-	std::string new_client_id2 = clientManager.addClient("Петя", "Долгопрудов", "dolgopet@mail.ru");
-	std::string new_client_id3 = clientManager.addClient("Алеша", "Кузькин", "ppp555@yahoo.com");
-	std::string new_client_id4 = clientManager.addClient("Алеша", "Кузькин", "p111@yandex.ru");
+	std::string new_client_id = clientManager.addClient("Солимр Ибн", "Вали Барад", "solimr@mail.ru");
+	std::string new_client_id2 = clientManager.addClient("Солимр Ибн", "Вали Барад", "ibnvalibarad@yandex.ru");
+	std::string new_client_id3 = clientManager.addClient("Петя", "Долгопрудов", "dolgopet@mail.ru");
+	std::string new_client_id4 = clientManager.addClient("Алеша", "Кузькин", "ppp555@yahoo.com");
+	std::string new_client_id5 = clientManager.addClient("Алеша", "Кузькин", "p111@yandex.ru");
+	
+
+	clientManager.addPhoneNumber("6", "123456");
+
+
+
 }
 catch (const std::exception& e)
 {

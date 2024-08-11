@@ -75,3 +75,32 @@ std::string ClientManager::addClient(const std::string& firstname, const std::st
 	}
 	return new_client_id;
 }
+
+void ClientManager::addPhoneNumber(std::string clientId, const std::string& phoneNumber)
+{
+	try
+	{
+		pqxx::work tx{ this->connection };
+		connection.prepare("prepared_update_ClientsData", "UPDATE ClientsData SET phone_number = $1 WHERE client_id = $2;");//prepare prepared statement
+		//connection.prepare("prepared_new_ClientsData", "INSERT INTO ClientsData(email, phone_number, client_id) VALUES($1, $2, $3);");
+
+		std::string exist_row_id = tx.query_value<std::string>("SELECT cd.id FROM ClientsData cd "//in case client_id is incorrect it throws an exception from here 
+			"where client_id = " + clientId + ";"
+		);
+
+		if (exist_row_id != "")
+		{
+			tx.exec_prepared("prepared_update_ClientsData", phoneNumber, clientId);
+		}
+		else {
+			std::cout << "The row with client_id = " + clientId + " is missing" << std::endl;
+		}
+		tx.commit();
+		std::cout << "The row with client_id = " + clientId + " has updated" << std::endl;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "The row with client_id = " + clientId + " is missing" << std::endl;
+		std::cout << e.what() << std::endl;
+	}
+}
