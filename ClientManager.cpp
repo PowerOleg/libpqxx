@@ -37,7 +37,7 @@ void ClientManager::initDbStructure()
 		"phone_number varchar(255), "
 		"client_id int references Client(id)"
 	);
-	std::cout << "A table ClientsData has created" << std::endl;
+	std::cout << "A table ClientsData has been created" << std::endl;
 }
 
 
@@ -67,7 +67,7 @@ std::string ClientManager::addClient(const std::string& firstname, const std::st
 		connection.prepare("prepared_insert_ClientsData", "INSERT INTO ClientsData(email, phone_number, client_id) VALUES($1, $2, $3);");//prepare prepared statement
 		tx2.exec_prepared("prepared_insert_ClientsData", email, "", new_client_id);//prepared statement
 		tx2.commit();
-		std::cout << "The client(" + firstname + ") has added";
+		std::cout << "The client(" + firstname + ") has been added";
 	}
 	catch (const std::exception& e)
 	{
@@ -76,7 +76,7 @@ std::string ClientManager::addClient(const std::string& firstname, const std::st
 	return new_client_id;
 }
 
-void ClientManager::addPhoneNumber(std::string clientId, const std::string& phoneNumber)
+void ClientManager::setPhoneNumber(const std::string clientId, const std::string& phoneNumber)
 {
 	try
 	{
@@ -96,11 +96,45 @@ void ClientManager::addPhoneNumber(std::string clientId, const std::string& phon
 			std::cout << "The row with client_id = " + clientId + " is missing" << std::endl;
 		}
 		tx.commit();
-		std::cout << "The row with client_id = " + clientId + " has updated" << std::endl;
+		std::cout << "The row with client_id = " + clientId + " has been updated" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << "The row with client_id = " + clientId + " is missing" << std::endl;
+		std::cout << e.what() << std::endl;
+	}
+}
+
+void ClientManager::updateClient(const std::string id, const std::string& firstname, const std::string& lastname, const std::string& new_email)
+{
+	try
+	{
+		pqxx::work tx{ this->connection };
+		tx.exec_params("UPDATE Client SET firstname = $1, secondname = $2 WHERE id = $3", firstname, lastname, id);
+		tx.exec_params("UPDATE ClientsData SET email = $1 WHERE client_id = $2", new_email, id);
+
+		tx.commit();
+		std::cout << "The client with id = " + id + " has been updated" << std::endl;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+}
+
+void ClientManager::removeClient(const std::string clientId)
+{
+	try
+	{
+		pqxx::work tx{ this->connection };
+		tx.exec("DELETE from clientsdata cd where cd.client_id = " + tx.esc(clientId));
+		tx.exec("DELETE from Client where id = " + tx.esc(clientId));
+		
+		tx.commit();
+		std::cout << "A client with id = " + clientId + " has been deleted";
+	}
+	catch (const std::exception& e)
+	{
 		std::cout << e.what() << std::endl;
 	}
 }

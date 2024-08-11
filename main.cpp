@@ -39,22 +39,22 @@
 	std::cout << "Tables were filled" << std::endl;
 }*/
 
-void delete_row_by_id(pqxx::connection& conn, std::string table, std::string id)
+/*void delete_row_by_id(pqxx::connection& conn, std::string table, std::string id)
 {
 	pqxx::work tx{ conn };
 	tx.exec("DELETE from " + table + " where id=" + id + ";");
 	tx.commit();
 	std::cout << "A client has deleted";
 
-}
+}*/
 
-void update_query(pqxx::connection& conn, std::string table, std::string column, std::string value, std::string where)
+/*void update_query(pqxx::connection& conn, std::string table, std::string column, std::string value, std::string where)
 {
 	pqxx::work tx{ conn };
 	tx.exec("UPDATE "+table+" SET "+column+"="+value+" where "+where+";");
 	tx.commit();
 	std::cout << "Column " << column << " has updated" << std::endl;
-}
+}*/
 
 std::set<std::string> select_query(pqxx::connection& conn) 
 {
@@ -82,14 +82,18 @@ try
 {
 	pqxx::connection connection("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
 	ClientManager clientManager(std::move(connection));
-	std::string new_client_id = clientManager.addClient("Солимр Ибн", "Вали Барад", "solimr@mail.ru");
+	/*std::string new_client_id = clientManager.addClient("Солимр Ибн", "Вали Барад", "solimr@mail.ru");
 	std::string new_client_id2 = clientManager.addClient("Солимр Ибн", "Вали Барад", "ibnvalibarad@yandex.ru");
 	std::string new_client_id3 = clientManager.addClient("Петя", "Долгопрудов", "dolgopet@mail.ru");
 	std::string new_client_id4 = clientManager.addClient("Алеша", "Кузькин", "ppp555@yahoo.com");
 	std::string new_client_id5 = clientManager.addClient("Алеша", "Кузькин", "p111@yandex.ru");
 	
 
-	clientManager.addPhoneNumber("6", "123456");
+	clientManager.addPhoneNumber("6", "123456");*/
+
+	//clientManager.updateClient("2", "Поросенок", "Пеппа", "pig@yandex.ru");
+	
+	//clientManager.removeClient("2");
 
 
 
