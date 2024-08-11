@@ -1,7 +1,7 @@
 #include "ClientManager.h"
 #include <iostream>
 
-ClientManager::ClientManager(std::string login, std::string password)
+ClientManager::ClientManager(pqxx::connection conn) : connection{ std::move(conn) }
 {
 	//setlocale(LC_ALL, "ru");
 	SetConsoleCP(CP_UTF8);
@@ -9,8 +9,9 @@ ClientManager::ClientManager(std::string login, std::string password)
 	std::cout << "Program has started" << std::endl;
 	try
 	{
-		pqxx::connection conn("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
-		this->connection = std::move(conn);
+
+		//pqxx::connection conn("host=localhost port=5432 dbname=" + db + " user=" + login + " password=" + password);
+		//this->connection = std::move(conn);
 		std::cout << "Connection is successful" << std::endl;
 	}
 		catch (const std::exception& e)
@@ -19,11 +20,11 @@ ClientManager::ClientManager(std::string login, std::string password)
 	}
 }
 
-void ClientManager::create_table(pqxx::connection& connection, std::string table, std::string param)
+void ClientManager::create_table(std::string table, std::string param)
 {
 	try
 	{
-	pqxx::work tx{ connection };
+	pqxx::work tx{ this->connection };
 	tx.exec("CREATE TABLE IF NOT EXISTS " + table + " (" + param + ");");
 	tx.commit();
 	}
@@ -35,14 +36,14 @@ void ClientManager::create_table(pqxx::connection& connection, std::string table
 
 void ClientManager::initDbStructure()
 {
-	create_table(connection,
+	create_table(
 		"Client",
 		"id SERIAL PRIMARY KEY, "
 		"firstname varchar(255) NOT NULL, "
 		"secondname varchar(255) NOT NULL"
 	);
 	std::cout << "A table Client has created" << std::endl;
-	create_table(connection,
+	create_table(
 		"ClientsData",
 		"id SERIAL PRIMARY KEY, "
 		"email varchar(255), "
@@ -79,21 +80,44 @@ void ClientManager::initDbStructure()
 }*/
 
 
-int ClientManager::addClient(pqxx::connection& connection, const std::string& firstName, const std::string& lastName, const std::string& email)
+std::string ClientManager::addClient(const std::string& firstname, const std::string& lastname, const std::string& email)
 {
+	std::string client_id = "";
+	try
+	{
+	pqxx::work tx{ this->connection };
+	
 	try 
 	{
-	pqxx::work tx{ connection };
-	connection.prepare("prepared_insert", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//study prepared statement
-
-	tx.exec("INSERT INTO Client(firstname, secondname) "
-		"VALUES('Солимр Ибн', 'Вали Барад'), "
-		"('Петя', 'Долгопрудов'), "
-		"('Алеша', 'Кузькин');"
-	);
+	connection.prepare("prepared_insert_Client", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//prepare prepared statement
+	tx.exec_prepared("prepared_insert", firstname, lastname);//prepared statement
+	tx.commit();
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
 	}
+
+	try
+	{
+		client_id = tx.query_value<std::string>("SELECT c.id FROM Client c "
+			"where firstname = \'" + firstname + "\' AND secondname = \'" + lastname + "\';"
+		);
+
+		connection.prepare("prepared_insert_ClientsData", "INSERT INTO ClientsData(id, email, phone_number, client_id) VALUES($1, $2, $3);");//prepare prepared statement
+		tx.exec_prepared("prepared_insert_ClientsData", email, "", client_id);//prepared statement
+		tx.commit();
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+
+
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	return client_id;
 }

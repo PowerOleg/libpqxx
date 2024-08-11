@@ -1,6 +1,6 @@
 #include <iostream>
 #include <pqxx/pqxx>
-
+#include "ClientManager.h"
 #include <tuple>
 #include <set>
 #pragma execution_character_set("utf-8")
@@ -75,8 +75,18 @@ std::set<std::string> select_query(pqxx::connection& conn)
 
 int main(int argc, char** argv)
 {
-
-
+try
+{
+	pqxx::connection connection("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
+	ClientManager clientManager(std::move(connection));
+	std::cout << "connection";
+}
+catch (const std::exception& e)
+{
+	std::cout << e.what() << std::endl;
+}
+	
+	//clientManager.addClient("2Петя2", "2Долгопрудов2", "dolgopet@mail.ru");
 
 
 		//create+
