@@ -1,9 +1,11 @@
 #include "ClientManager.h"
 #include <iostream>
-#include <tuple>
 
 ClientManager::ClientManager(pqxx::connection&& conn) : connection { std::move(conn) }
 {
+	this->connection.prepare("prepared_insert_Client", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//prepare prepared statement
+	this->connection.prepare("prepared_insert_ClientsData", "INSERT INTO ClientsData(email, phone_number, client_id) VALUES($1, $2, $3);");//prepare prepared statement
+	this->connection.prepare("prepared_update_ClientsData", "UPDATE ClientsData SET phone_number = $1 WHERE client_id = $2;");//prepare prepared statement
 	std::cout << "Connection is successful" << std::endl;
 }
 
@@ -40,15 +42,12 @@ void ClientManager::initDbStructure()
 	std::cout << "A table ClientsData has been created" << std::endl;
 }
 
-
-
 std::string ClientManager::addClient(const std::string& firstname, const std::string& lastname, const std::string& email)
 {
 	std::string new_client_id = "";
 	try 
 	{
 		pqxx::work tx{ this->connection };
-		connection.prepare("prepared_insert_Client", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//prepare prepared statement
 		tx.exec_prepared("prepared_insert_Client", firstname, lastname);//prepared statement
 		tx.commit();
 	}
@@ -64,10 +63,10 @@ std::string ClientManager::addClient(const std::string& firstname, const std::st
 			"where firstname = \'" + firstname + "\' AND secondname = \'" + lastname + "\';"
 		);
 
-		connection.prepare("prepared_insert_ClientsData", "INSERT INTO ClientsData(email, phone_number, client_id) VALUES($1, $2, $3);");//prepare prepared statement
+		
 		tx2.exec_prepared("prepared_insert_ClientsData", email, "", new_client_id);//prepared statement
 		tx2.commit();
-		std::cout << "The client(" + firstname + ") has been added";
+		std::cout << "The client(" + firstname + ") has been added" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -81,7 +80,6 @@ void ClientManager::setPhoneNumber(const std::string clientId, const std::string
 	try
 	{
 		pqxx::work tx{ this->connection };
-		connection.prepare("prepared_update_ClientsData", "UPDATE ClientsData SET phone_number = $1 WHERE client_id = $2;");//prepare prepared statement
 		//connection.prepare("prepared_new_ClientsData", "INSERT INTO ClientsData(email, phone_number, client_id) VALUES($1, $2, $3);");
 
 		std::string exist_row_id = tx.query_value<std::string>("SELECT cd.id FROM ClientsData cd "//in case client_id is incorrect it throws an exception from here 
@@ -131,10 +129,34 @@ void ClientManager::removeClient(const std::string clientId)
 		tx.exec("DELETE from Client where id = " + tx.esc(clientId));
 		
 		tx.commit();
-		std::cout << "A client with id = " + clientId + " has been deleted";
+		std::cout << "A client with id = " + clientId + " has been deleted" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
+	}
+}
+std::set<std::string> ClientManager::findClients(const std::string& searchValue)
+{
+	pqxx::work tx{ this->connection };
+	auto values = tx.query<std::string, std::string>("SELECT c.firstname, c.secondname FROM Client c "
+		"JOIN Clientsdata cd on cd.client_id = c.id "
+		"where " + searchValue + ";"
+	);
+
+	std::set<std::string> result_set;
+	for (std::tuple<std::string, std::string> value : values)
+	{
+		result_set.insert(std::get<0>(value) + " " + std::get<1>(value));
+	}
+
+	return result_set;
+}
+
+void ClientManager::print(std::set<std::string> values)
+{
+	for (std::string str : values)
+	{
+		std::cout << "Name: " << str << std::endl;
 	}
 }
