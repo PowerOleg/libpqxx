@@ -7,7 +7,7 @@
 
 class ClientManager {
 public:
-    ClientManager(pqxx::connection&& conn);  //конструктор, который настраивает соединение, может быть с параметрами
+    ClientManager(const std::string& connectionString);  //конструктор, который настраивает соединение, может быть с параметрами
     void initDbStructure(); // Метод, создающий структуру БД (таблицы)
     std::string addClient(const std::string& firstname, const std::string& lastname, const std::string& email); //создаём клиента и возвращаем его clientId
     void setPhoneNumber(const std::string clientId, const std::string& phoneNumber);

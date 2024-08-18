@@ -1,7 +1,8 @@
 #include "ClientManager.h"
 #include <iostream>
 
-ClientManager::ClientManager(pqxx::connection&& conn) : connection { std::move(conn) }
+//ClientManager::ClientManager(pqxx::connection&& conn) : connection { std::move(conn) }
+ClientManager::ClientManager(const std::string& connectionString) : connection{ connectionString }
 {
 	this->connection.prepare("prepared_insert_Client", "INSERT INTO Client(firstname, secondname) VALUES($1, $2);");//prepare prepared statement
 	this->connection.prepare("prepared_insert_ClientsData", "INSERT INTO ClientsData(email, phone_number, client_id) VALUES($1, $2, $3);");//prepare prepared statement

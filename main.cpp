@@ -11,8 +11,7 @@ int main(int argc, char** argv)
 	SetConsoleOutputCP(CP_UTF8);
 try
 {
-	pqxx::connection connection("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
-	ClientManager clientManager(std::move(connection));
+	ClientManager clientManager("host=localhost port=5432 dbname=cpp_integration user=postgres password=106");
 	std::string new_client_id = clientManager.addClient("Солимр Ибн", "Вали Барад", "solimr@mail.ru");
 	std::string new_client_id2 = clientManager.addClient("Солимр Ибн", "Вали Барад", "ibnvalibarad@yandex.ru");
 	std::string new_client_id3 = clientManager.addClient("Петя", "Долгопрудов", "dolgopet@mail.ru");

@@ -229,3 +229,6 @@
 2511	2742	7450899395485679	cmakeSQL_libpqxx.exe	8f46e67a762723ec
 26	2262	7450900369359755	CMakeFiles/cmakeSQL_libpqxx.dir/main.cpp.obj	aa6a1c79f12ada8c
 2263	2560	7450900371382894	cmakeSQL_libpqxx.exe	8f46e67a762723ec
+326	3534	7456914135232654	CMakeFiles/cmakeSQL_libpqxx.dir/main.cpp.obj	aa6a1c79f12ada8c
+336	3600	7456914135907949	CMakeFiles/cmakeSQL_libpqxx.dir/ClientManager.cpp.obj	11d3eb8da6b4af20
+3600	6319	7456914159086196	cmakeSQL_libpqxx.exe	8f46e67a762723ec
